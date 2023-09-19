@@ -1,8 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:imcapp/model/pessoa.dart';
-import 'package:imcapp/repositories/pessoa_repository.dart';
+import 'package:imcapp/model/pessoa_sqlite_model.dart';
+import 'package:imcapp/pages/configuracoes/configuracoes_shared_preferences_page.dart';
+import 'package:imcapp/repositories/pessoa_sqllite_repository.dart';
+import 'package:imcapp/services/app_storage_service.dart';
 
 class PessoaPage extends StatefulWidget {
   const PessoaPage({super.key});
@@ -14,10 +16,16 @@ class PessoaPage extends StatefulWidget {
 class _PessoaPageState extends State<PessoaPage> {
   final _formKey = GlobalKey<FormState>();
 
-  var pessoaRepository = PessoaRepository();
-  var _pessoas = const <Pessoa>[];
+  AppStorageService storage = AppStorageService();
+
+  var pessoaRepository = PessoaSQLiteRepository();
+  var _pessoas = const <PessoaSQLiteModel>[];
   var alturaController = TextEditingController();
   var pesoController = TextEditingController();
+  int id = 0;
+  String classificacao = "";
+  double imc = 0;
+  String nome = "";
 
   @override
   void initState() {
@@ -26,7 +34,11 @@ class _PessoaPageState extends State<PessoaPage> {
   }
 
   void obterPessoas() async {
-    _pessoas = await pessoaRepository.listar();
+    _pessoas = await pessoaRepository.obterDados();
+    alturaController.text =
+        (await (storage.getConfiguracoesAltura())).toString();
+    nome = (await storage.getConfiguracoesNomeUsuario()).toString();
+
     setState(() {});
   }
 
@@ -37,6 +49,20 @@ class _PessoaPageState extends State<PessoaPage> {
           title: const Text('Controle de IMC'),
           elevation: 2.0,
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              color: Colors.black,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const ConfiguracoesSharedPreferencesPage(),
+                    ));
+              },
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
@@ -66,13 +92,19 @@ class _PessoaPageState extends State<PessoaPage> {
                                 await pessoaRepository.remover(pessoa.id);
                                 obterPessoas();
                               },
-                              key: Key(pessoa.id),
+                              key: Key(pessoa.id.toString()),
                               child: ListTile(
                                 title: Text(
                                     "Altura: ${pessoa.altura.toString()} - Peso: ${pessoa.peso.toString()} "),
-                                subtitle: Text(pessoa.classificaoImc),
+                                subtitle: Text(pessoa.classificacaoImc),
                                 trailing: Text(pessoa.data),
                                 isThreeLine: true,
+                                onTap: () {
+                                  id = pessoa.id;
+                                  pesoController.text = pessoa.peso.toString();
+                                  setState(() {});
+                                  frmDados();
+                                },
                               ),
                             );
                           }),
@@ -110,14 +142,6 @@ class _PessoaPageState extends State<PessoaPage> {
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: TextFormField(
-                            controller: alturaController,
-                            decoration: const InputDecoration(
-                                hintText: "Informe sua altura (1,70) metros"),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: TextFormField(
                             controller: pesoController,
                             decoration: const InputDecoration(
                                 hintText: "Informe seu peso  (75) kilos"),
@@ -129,12 +153,15 @@ class _PessoaPageState extends State<PessoaPage> {
                             child: const Text('Salvar'),
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                await pessoaRepository.adicionar(Pessoa(
-                                    double.parse(pesoController.text),
-                                    double.parse(alturaController.text)));
+                                await pessoaRepository.salvar(PessoaSQLiteModel(
+                                  id,
+                                  nome,
+                                  double.parse(pesoController.text),
+                                  double.parse(alturaController.text),
+                                ));
+                                obterPessoas();
                                 Navigator.pop(context);
                                 pesoController.text = "";
-                                alturaController.text = "";
                                 setState(() {});
                               }
                             },

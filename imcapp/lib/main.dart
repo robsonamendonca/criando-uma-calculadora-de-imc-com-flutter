@@ -17,10 +17,7 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate
-        ],
-        supportedLocales: const [
-          Locale('pt')
-        ],
+        ],        
         debugShowCheckedModeBanner: false,
         title: 'IMC Nível',
         theme: ThemeData(

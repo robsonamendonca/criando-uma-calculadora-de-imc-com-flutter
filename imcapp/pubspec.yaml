@@ -38,6 +38,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.18.1
+  shared_preferences: ^2.2.1
+  sqflite: ^2.3.0
 
 dev_dependencies:
   flutter_test:
