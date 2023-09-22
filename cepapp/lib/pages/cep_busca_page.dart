@@ -133,6 +133,7 @@ class _CepBuscaPageState extends State<CepBuscaPage> {
   void salvarCep() async {
     var cepRepository = CepsBack4AppRepository();
     bool ok = await cepRepository.inserirCep(CepBack4AppModel.inserir(
+        "",
         cepController.text,
         viacepModel.logradouro,
         viacepModel.complemento,

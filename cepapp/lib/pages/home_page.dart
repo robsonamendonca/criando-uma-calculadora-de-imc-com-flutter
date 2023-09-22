@@ -4,7 +4,6 @@ import 'package:cepapp/pages/cep_busca_page.dart';
 import 'package:cepapp/pages/cep_page.dart';
 import 'package:cepapp/repositories/cep_back4app_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,7 +14,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   CepsBack4AppRepository cepRepository = CepsBack4AppRepository();
   var cepsBack4App = CepsBack4AppModel([]);
-  var carregando = false;
+  late bool carregando = true;
+  var qtdCepsCadastrados = "0";
+  var qtdCepsAlterados = "0";
+  var qtdCepsEmSP = "0";
+  var qtdCepsComPaulista = "0";
 
   @override
   void initState() {
@@ -29,6 +32,10 @@ class _HomePageState extends State<HomePage> {
     });
     cepsBack4App = (await cepRepository.obterCeps());
     setState(() {
+      qtdCepsCadastrados = cepsBack4App.ceps.length.toString();
+      qtdCepsAlterados = getAlterados();
+      qtdCepsEmSP = getEmSP();
+      qtdCepsComPaulista = getPaulista();
       carregando = false;
     });
   }
@@ -55,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: _buildBody(context),
+      body: (carregando) ? Container() : _buildBody(context),
     );
   }
 
@@ -65,6 +72,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBody(BuildContext context) {
+    obterCeps();
     return Stack(
       children: <Widget>[
         _buildBodyContent(context),
@@ -163,10 +171,10 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           _buildTaskStatusWidget(
               context: context,
-              count: cepsBack4App.ceps.length.toString(),
+              count: qtdCepsCadastrados,
               title: 'Cadastrados'),
           _buildTaskStatusWidget(
-              context: context, count: getAlterados(), title: 'Alterados'),
+              context: context, count: qtdCepsAlterados, title: 'Alterados'),
         ]);
   }
 
@@ -208,12 +216,12 @@ class _HomePageState extends State<HomePage> {
                 context: context,
                 icon: Icons.library_books,
                 title: 'Em SP',
-                subTitle: '${getEmSP()} CEPs'),
+                subTitle: '$qtdCepsEmSP CEPs'),
             _buildGridTile(
                 context: context,
                 icon: Icons.school,
                 title: 'Com Paulista',
-                subTitle: '${getPaulista()} CEPs'),
+                subTitle: '$qtdCepsComPaulista CEPs'),
           ].map((Widget child) {
             return GridTile(child: child);
           }).toList()),
@@ -257,15 +265,12 @@ class _HomePageState extends State<HomePage> {
   String getAlterados() {
     var result = cepsBack4App.ceps.map((e) {
       if (e.createdAt != null) {
-        DateTime startDate =
-            DateFormat("yyyy-MM-dd").parse('${e.createdAt}', true);
-        DateTime? endDate = e.updatedAt != null
-            ? DateFormat("yyyy-MM-dd").parse('${e.updatedAt}', true)
-            : null;
-        var now = DateTime.now();
+        DateTime startDate = DateTime.parse('${e.createdAt}');
+        DateTime? endDate =
+            e.updatedAt != null ? DateTime.parse('${e.updatedAt}') : null;
+        //var now = DateTime.now();
 
-        if ((startDate.isBefore(now) || startDate != now) &&
-            (endDate == null || endDate.isBefore(now))) {
+        if ((startDate != endDate)) {
           return e;
         }
       }
@@ -289,7 +294,7 @@ class _HomePageState extends State<HomePage> {
   String getPaulista() {
     var result = cepsBack4App.ceps.map((e) {
       if (e.logradouro != null) {
-        if (e.logradouro?.toUpperCase() == "PAULISTA") {
+        if (e.logradouro!.toUpperCase().contains("PAULISTA")) {
           return e;
         }
       }

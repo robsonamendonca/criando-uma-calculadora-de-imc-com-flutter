@@ -60,7 +60,7 @@ class _CepPageState extends State<CepPage> {
           child: Column(
             children: [
               carregando
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : Expanded(
                       child: ListView.builder(
                         itemCount: _cepsBack4App.ceps.length,
@@ -72,6 +72,9 @@ class _CepPageState extends State<CepPage> {
                               await cepRepository
                                   .deletarCep(cep.objectId.toString());
                               obterCeps();
+                              CustomAlertDialog.alertTyoe("success",
+                                  "CEP alterado com sucesso!", context);
+                              setState(() {});
                             },
                             key: Key(cep.objectId.toString()),
                             child: ListTile(
@@ -82,7 +85,7 @@ class _CepPageState extends State<CepPage> {
                               leading: Text(cep.uf.toString()),
                               trailing: Text(cep.cep.toString()),
                               onTap: () {
-                                alterarCEP(context);
+                                alterarCEP(context, cep);
                               },
                             ),
                           );
@@ -118,6 +121,7 @@ class _CepPageState extends State<CepPage> {
                           .obterCep(cepController.text);
                       bool ok = await cepRepository.inserirCep(
                           CepBack4AppModel.inserir(
+                              "",
                               cepController.text,
                               _cepViaCep.logradouro,
                               _cepViaCep.complemento,
@@ -151,17 +155,41 @@ class _CepPageState extends State<CepPage> {
         });
   }
 
-  Future<dynamic> alterarCEP(BuildContext context) {
+  Future<dynamic> alterarCEP(BuildContext context, CepBack4AppModel cep) {
+    var logradouroController =
+        TextEditingController(text: cep.logradouro.toString());
+    var complementoController =
+        TextEditingController(text: cep.complemento.toString());
+    var bairroController = TextEditingController(text: cep.bairro.toString());
+    var localidadeController =
+        TextEditingController(text: cep.localidade.toString());
+    var ufController = TextEditingController(text: cep.uf.toString());
     return showDialog(
         context: context,
         builder: (BuildContext bc) {
           return AlertDialog(
-            title: const Text("Alterar CEP"),
+            title: Text("Alterar CEP: ${cep.cep.toString()}"),
             content: Column(
               children: [
                 TextField(
-                    controller: cepController,
-                    decoration: const InputDecoration(label: Text("CEP"))),
+                    controller: logradouroController,
+                    decoration: const InputDecoration(
+                        label: Text("Lougradouro(Rua/Av)"))),
+                TextField(
+                    controller: complementoController,
+                    decoration: const InputDecoration(
+                        label: Text("Complemento(Casa/Apto)"))),
+                TextField(
+                    controller: bairroController,
+                    decoration: const InputDecoration(label: Text("Bairro"))),
+                TextField(
+                    controller: localidadeController,
+                    decoration: const InputDecoration(
+                        label: Text("Localidade(Cidade)"))),
+                TextField(
+                    controller: ufController,
+                    decoration:
+                        const InputDecoration(label: Text("UF(Estado)"))),
               ],
             ),
             actions: [
@@ -171,8 +199,34 @@ class _CepPageState extends State<CepPage> {
                   },
                   child: const Text("Cancelar")),
               TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    bool ok =
+                        await cepRepository.alterarCep(CepBack4AppModel.inserir(
+                      cep.objectId,
+                      cep.cep.toString(),
+                      logradouroController.text,
+                      complementoController.text,
+                      bairroController.text,
+                      localidadeController.text,
+                      ufController.text,
+                      "",
+                      "",
+                      "",
+                      "",
+                    ));
+                    if (ok) {
+                      Navigator.pop(context);
+                      CustomAlertDialog.alertTyoe(
+                          "success", "CEP alterado com sucesso!", context);
+                      obterCeps();
+                      setState(() {});
+                    } else {
+                      CustomAlertDialog.alertTyoe(
+                          "error",
+                          "Não foi possível alterar, tente novamente!",
+                          context);
+                      setState(() {});
+                    }
                   },
                   child: const Text("Salvar")),
             ],

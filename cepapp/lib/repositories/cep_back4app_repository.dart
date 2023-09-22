@@ -50,11 +50,13 @@ class CepsBack4AppRepository {
   }
 
   Future<bool> alterarCep(CepBack4AppModel cep) async {
+    String objectId = cep.objectId.toString();
     try {
-      await _customDio.dio.put("/Ceps/${cep.objectId}}", data: cep.toJsonBody());
+      await _customDio.dio.put("/Ceps/$objectId", data: cep.toJsonBody());
       return true;
     } catch (e) {
       debugPrint(e.toString());
+      debugPrint(cep.toJsonBody().toString());
       return false;
     }
   }

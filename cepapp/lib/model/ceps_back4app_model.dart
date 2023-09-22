@@ -50,6 +50,7 @@ class CepBack4AppModel {
       this.updatedAt});
 
   CepBack4AppModel.inserir(
+    this.objectId,
     this.cep,
     this.logradouro,
     this.complemento,
@@ -98,16 +99,17 @@ class CepBack4AppModel {
 
   Map<String, dynamic> toJsonBody() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    if (objectId != "") data['objectId'] = objectId;
     data['cep'] = cep;
     data['logradouro'] = logradouro;
     data['complemento'] = complemento;
     data['bairro'] = bairro;
     data['localidade'] = localidade;
     data['uf'] = uf;
-    data['ibge'] = ibge;
-    data['gia'] = gia;
-    data['ddd'] = ddd;
-    data['siafi'] = siafi;
+    if (ibge != "") data['ibge'] = ibge;
+    if (gia != "") data['gia'] = gia;
+    if (ddd != "") data['ddd'] = ddd;
+    if (siafi != "") data['siafi'] = siafi;
     return data;
   }
 }
