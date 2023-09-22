@@ -1,0 +1,8 @@
+flutter doctor
+
+
+flutter create --org br.com.hdev --description "Consumo da API do ViaCEP (c/cadastro) para Android" --platforms android cepapp
+
+flutter clean
+flutter pub get
+flutter run --verbose
