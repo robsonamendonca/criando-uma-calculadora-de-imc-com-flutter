@@ -1,7 +1,7 @@
 flutter doctor
 
 
-flutter create --org br.com.hdev --description "Consumo da API do ViaCEP (c/cadastro) para Android" --platforms android cepapp
+flutter create --org br.com.hdev --description "Lista de contatos para Android" --platforms android contatoapp
 
 flutter clean
 flutter pub get
