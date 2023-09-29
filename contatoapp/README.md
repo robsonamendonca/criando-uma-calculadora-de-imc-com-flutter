@@ -21,7 +21,7 @@
 
 ### Mobile Screenshot
 <div align="center">
-   <img src="contato_app.gif width="1000">
+   <img src="contato_app.gif" width="1000">
 </div>   
 
 ## :computer: 🚀 Technologies
