@@ -1,16 +1,43 @@
-# cepapp
+<!-- Logo -->
+<p align="center">
+   <img src="playstore.png" alt="CEP" width="280"/>
+</p>
 
-Consumo da API do ViaCEP (c/cadastro) para Android
 
-## Getting Started
+<p align="center">	
+   <a href="https://www.linkedin.com/in/robsonamendonca/">
+      <img alt="Robson Mendonça" src="https://img.shields.io/badge/-robsonamendonca-8257E5?style=flat&logo=Linkedin&logoColor=white" />
+   </a>
 
-This project is a starting point for a Flutter application.
+</p>
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# :pushpin: Table of Contents
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* [Technologies](#computer-technologies)
+* [Found a bug? Missing a specific feature?](#bug-issues)
+* [License](#closed_book-license)
+
+
+### Mobile Screenshot
+<div align="center">
+   <img src="cep_app.gif" width="1000">
+</div>   
+
+## :computer: 🚀 Technologies
+This project was made using the follow technologies:
+
+- ✔️ Dart
+
+- ✔️ Flutter
+
+# :bug: Issues
+
+Feel free to **file a new issue** with a respective title and description on the the repository. If you already found a solution to your problem, **i would love to review your pull request**!
+
+# :closed_book: License
+
+Made with 💜 by [Robson Mendonça](https://github.com/robsonamendonca) 🚀.
+This project is under the [MIT license](./LICENSE.txt).
+
+Give a ⭐️ if this project helped you!
